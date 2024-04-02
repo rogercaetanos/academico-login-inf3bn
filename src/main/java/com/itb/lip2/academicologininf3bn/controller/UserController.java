@@ -1,6 +1,7 @@
 package com.itb.lip2.academicologininf3bn.controller;
 
-import java.util.ArrayList;
+import java.net.URI;
+
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.itb.lip2.academicologininf3bn.model.Usuario;
 import com.itb.lip2.academicologininf3bn.service.UsuarioService;
@@ -27,16 +29,22 @@ public class UserController {
 	private UsuarioService usuarioService;
 
 	@GetMapping("/users")
-	public List<Usuario>getUsers() {
+	public ResponseEntity<List<Usuario>>getUsers() {
 		
-		return usuarioService.findAll();	
+		// Necessário para retornar o código corretamente "200" ( sucesso na consulta)
+		
+		return ResponseEntity.ok().body(usuarioService.findAll());	
 	}
 	
 	
 	@PostMapping("/users")
 	public ResponseEntity<Usuario> saveUser(@RequestBody Usuario usuario) {
 		
-		return ResponseEntity.ok().body(usuarioService.save(usuario));
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/academico/api/v1/users").toString());
+		
+		// Retornando o código "201" (recurso criado com sucesso)
+		
+		return ResponseEntity.created(uri).body(usuarioService.save(usuario));	
 	}
 		
 }
