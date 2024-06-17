@@ -12,4 +12,6 @@ public interface UsuarioService {
 
 	Optional<Usuario> findById(Long id);
 
+	Usuario update(Long id, Usuario usuario) throws Exception;
+
 }
