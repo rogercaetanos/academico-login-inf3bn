@@ -26,3 +26,16 @@ public class AlunoController {
         }
     }
 }
+
+/*  //Lembrete Corrigir depois que o pessoal terminar  29/09/24
+*
+Atividade Peso 7
+
+ProfessorRepository
+ProfessorService      (update)
+ProfessorServiceImpl  (update)
+ProfessorController   (updateProfessor)
+*
+*
+*
+* */
