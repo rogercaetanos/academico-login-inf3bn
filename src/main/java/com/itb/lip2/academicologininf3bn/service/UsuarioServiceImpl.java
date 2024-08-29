@@ -1,9 +1,19 @@
 package com.itb.lip2.academicologininf3bn.service;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+
+import com.itb.lip2.academicologininf3bn.model.Papel;
+import com.itb.lip2.academicologininf3bn.repository.PapelRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.expression.ExpressionException;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.itb.lip2.academicologininf3bn.model.Usuario;
 import com.itb.lip2.academicologininf3bn.repository.UsuarioRepository;
@@ -11,14 +21,37 @@ import com.itb.lip2.academicologininf3bn.repository.UsuarioRepository;
 import javax.transaction.Transactional;
 
 @Service
-public class UsuarioServiceImpl implements UsuarioService{
+public class UsuarioServiceImpl implements UsuarioService, UserDetailsService {
 
 	@Autowired
 	private UsuarioRepository usuarioRepository;
-	
+
+	@Autowired
+	private PapelRepository papelRepository;
+
+	@Autowired
+	private BCryptPasswordEncoder passwordEncoder;
+
+	@Override
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+
+		Usuario usuario = usuarioRepository.findByEmail(username);
+		if(usuario == null) {
+			throw new UsernameNotFoundException("Não foi encontrado o usuário no banco de dados");
+
+		}else {
+			System.out.println("Usuário encontrado: " + username);
+		}
+		Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
+		usuario.getPapeis().forEach(papel ->{
+			       authorities.add(new SimpleGrantedAuthority(papel.getNomePapel()));
+		});
+		return new org.springframework.security.core.userdetails.User(usuario.getEmail(), usuario.getSenha(), authorities);
+	}
+
 	@Override
 	public Usuario save(Usuario usuario) {
-		
+		usuario.setSenha(passwordEncoder.encode(usuario.getSenha()));
 		return usuarioRepository.save(usuario);
 	}
 
@@ -46,4 +79,27 @@ public class UsuarioServiceImpl implements UsuarioService{
 			return usuarioRepository.save(user);
 		}).orElseThrow(()-> new ExpressionException("Usuário não encontrado!"));
 	}
+
+	@Override
+	public Usuario findByEmail(String email) {
+		return usuarioRepository.findByEmail(email);
+	}
+
+
+	@Override
+	public Papel savePapel(Papel papel) {
+		return papelRepository.save(papel);
+	}
+
+	@Override
+	public void addPapelToUsuario(String email, String papelNome) {
+
+		Usuario usuario = usuarioRepository.findByEmail(email);
+		Papel papel = papelRepository.findByNomePapel(papelNome);
+		usuario.getPapeis().add(papel);
+
+	}
+
+
+
 }
