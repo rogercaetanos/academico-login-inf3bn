@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
-import com.itb.lip2.academicologininf3bn.model.Papel;
+import com.itb.lip2.academicologininf3bn.model.*;
 import com.itb.lip2.academicologininf3bn.repository.PapelRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.expression.ExpressionException;
@@ -15,7 +15,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import com.itb.lip2.academicologininf3bn.model.Usuario;
 import com.itb.lip2.academicologininf3bn.repository.UsuarioRepository;
 
 import javax.transaction.Transactional;
@@ -56,6 +55,33 @@ public class UsuarioServiceImpl implements UsuarioService, UserDetailsService {
 	}
 
 	@Override
+	public Usuario saveProfessor(Professor professor) {
+		professor.setCodStatusUsuario(true);
+		professor.setSenha(passwordEncoder.encode(professor.getSenha()));
+		professor.setPapeis(new ArrayList<>());
+		addPapelToUsuario(professor, "ROLE_PROFESSOR");
+		return usuarioRepository.save(professor);
+	}
+
+	@Override
+	public Usuario saveAluno(Aluno aluno) {
+		aluno.setCodStatusUsuario(true);
+		aluno.setSenha(passwordEncoder.encode(aluno.getSenha()));
+		aluno.setPapeis(new ArrayList<>());
+		addPapelToUsuario(aluno, "ROLE_ALUNO");
+		return usuarioRepository.save(aluno);
+	}
+
+	@Override
+	public Usuario saveFuncionario(Funcionario funcionario) {
+		funcionario.setCodStatusUsuario(true);
+		funcionario.setSenha(passwordEncoder.encode(funcionario.getSenha()));
+		funcionario.setPapeis(new ArrayList<>());
+		addPapelToUsuario(funcionario, "ROLE_FUNCIONARIO");
+		return usuarioRepository.save(funcionario);
+	}
+
+	@Override
 	public List<Usuario> findAll() {
 		
 		return usuarioRepository.findAll();
@@ -92,9 +118,7 @@ public class UsuarioServiceImpl implements UsuarioService, UserDetailsService {
 	}
 
 	@Override
-	public void addPapelToUsuario(String email, String papelNome) {
-
-		Usuario usuario = usuarioRepository.findByEmail(email);
+	public void addPapelToUsuario(Usuario usuario, String papelNome) {
 		Papel papel = papelRepository.findByNomePapel(papelNome);
 		usuario.getPapeis().add(papel);
 

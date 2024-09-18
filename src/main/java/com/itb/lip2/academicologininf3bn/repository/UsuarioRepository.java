@@ -4,9 +4,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.itb.lip2.academicologininf3bn.model.Usuario;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
+
+@Repository
 public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
     Optional<Usuario> findById(Long id);
 

@@ -4,6 +4,9 @@ import java.net.URI;
 
 import java.util.List;
 
+import com.itb.lip2.academicologininf3bn.model.Aluno;
+import com.itb.lip2.academicologininf3bn.model.Funcionario;
+import com.itb.lip2.academicologininf3bn.model.Professor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,16 +36,37 @@ public class UserController {
 		return ResponseEntity.ok().body(usuarioService.findAll());	
 	}
 
+	/*
+	Agora, para prover o login criaremos um save para cada tipo de usuário
+
 	@PostMapping("/users")
 	public ResponseEntity<Usuario> saveUser(@RequestBody Usuario usuario) {
 		
 		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/academico/api/v1/users").toString());
-		
 		// Retornando o código "201" (recurso criado com sucesso)
 		
 		return ResponseEntity.created(uri).body(usuarioService.save(usuario));	
 	}
+  */
 
+	@PostMapping("/users/professor")
+	public ResponseEntity<Usuario> saveProfessor(@RequestBody Professor professor) {
+
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/academico/api/v1/users/professor").toString());
+		return ResponseEntity.created(uri).body(usuarioService.saveProfessor(professor));
+	}
+	@PostMapping("/users/aluno")
+	public ResponseEntity<Usuario> saveAluno(@RequestBody Aluno aluno) {
+
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/academico/api/v1/users/aluno").toString());
+		return ResponseEntity.created(uri).body(usuarioService.saveAluno(aluno));
+	}
+	@PostMapping("/users/funcionario")
+	public ResponseEntity<Usuario> saveFuncionario(@RequestBody Funcionario funcionario) {
+
+		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/academico/api/v1/users/funcionario").toString());
+		return ResponseEntity.created(uri).body(usuarioService.saveFuncionario(funcionario));
+	}
 	@GetMapping("/users/{id}")
 	public ResponseEntity<Usuario> findUserById(@PathVariable(value = "id") Long id ) {
 

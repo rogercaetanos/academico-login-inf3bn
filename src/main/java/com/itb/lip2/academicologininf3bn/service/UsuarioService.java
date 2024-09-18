@@ -3,12 +3,15 @@ package com.itb.lip2.academicologininf3bn.service;
 import java.util.List;
 import java.util.Optional;
 
-import com.itb.lip2.academicologininf3bn.model.Papel;
-import com.itb.lip2.academicologininf3bn.model.Usuario;
+import com.itb.lip2.academicologininf3bn.model.*;
 
 public interface UsuarioService {
 	
 	Usuario save(Usuario usuario);
+	Usuario saveProfessor(Professor professor);
+	Usuario saveAluno (Aluno aluno);
+	Usuario saveFuncionario(Funcionario funcionario);
+
 	List<Usuario> findAll();
 
 	Optional<Usuario> findById(Long id);
@@ -16,7 +19,7 @@ public interface UsuarioService {
 	Usuario update(Long id, Usuario usuario) throws Exception;
 
 	Papel savePapel(Papel papel);
-	void addPapelToUsuario(String email, String papelNome);
+	void addPapelToUsuario(Usuario usuario, String papelNome);
 
 	Usuario findByEmail(String email);
 
